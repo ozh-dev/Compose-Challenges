@@ -20,11 +20,11 @@ fun Icon(
     @DrawableRes res: Int
 ) {
     Box(
-        modifier = modifier,
+        modifier = Modifier.clip(CircleShape).then(modifier),
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.fillMaxSize().clip(CircleShape),
+            modifier = Modifier.fillMaxSize(),
             painter = painterResource(id = res),
             contentDescription = ""
         )
