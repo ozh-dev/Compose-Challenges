@@ -7,18 +7,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
 
-data class GridLayoutStateImpl(
+data class WatchGridStateImpl(
     private val initialOffset: Offset = Offset.Zero
 ) : WatchGridState {
 
     companion object {
-        val Saver = Saver<GridLayoutStateImpl, List<Float>>(
+        val Saver = Saver<WatchGridStateImpl, List<Float>>(
             save = {
                 val (x, y) = it.currentOffset
                 listOf(x, y)
             },
             restore = {
-                GridLayoutStateImpl(Offset(it[0], it[1]))
+                WatchGridStateImpl(Offset(it[0], it[1]))
             }
         )
     }
@@ -44,7 +44,7 @@ data class GridLayoutStateImpl(
         animatable.snapTo(Offset(x, y))
     }
 
-    override suspend fun animateTo(velocity: Offset, value: Offset) {
+    override suspend fun animateTo(value: Offset, velocity: Offset) {
         val x = value.x.coerceIn(config.overScrollRangeHorizontal)
         val y = value.y.coerceIn(config.overScrollRangeVertical)
         animatable.animateTo(
@@ -61,12 +61,13 @@ data class GridLayoutStateImpl(
     override fun getPositionFor(index: Int): IntOffset {
         val (offsetX, offsetY) = currentOffset
         val (cellX, cellY) = config.cells[index]
-        var x = (cellX * config.itemSizePx) + offsetX.toInt()
-        val y = (cellY * config.itemSizePx) + offsetY.toInt()
-
-        if (cellY % 2 != 0) {
-            x += config.halfItemSizePx
+        val rowOffset = if (cellY % 2 != 0) {
+            config.halfItemSizePx
+        } else {
+            0
         }
+        val x = (cellX * config.itemSizePx) + offsetX.toInt() + rowOffset
+        val y = (cellY * config.itemSizePx) + offsetY.toInt()
 
         return IntOffset(x, y)
     }
@@ -93,8 +94,8 @@ data class GridLayoutStateImpl(
 }
 
 @Composable
-fun rememberGridLayoutState(): WatchGridState {
-    return rememberSaveable(saver = GridLayoutStateImpl.Saver) {
-        GridLayoutStateImpl()
+fun rememberWatchGridState(): WatchGridState {
+    return rememberSaveable(saver = WatchGridStateImpl.Saver) {
+        WatchGridStateImpl()
     }
 }

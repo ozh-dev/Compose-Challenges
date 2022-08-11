@@ -11,7 +11,7 @@ interface WatchGridState {
     val animatable: Animatable<Offset, AnimationVector2D>
 
     suspend fun snapTo(value: Offset)
-    suspend fun animateTo(velocity: Offset, value: Offset)
+    suspend fun animateTo(value: Offset, velocity: Offset)
     suspend fun stop()
 
     fun getPositionFor(index: Int): IntOffset

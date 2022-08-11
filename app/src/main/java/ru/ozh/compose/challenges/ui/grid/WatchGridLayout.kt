@@ -20,9 +20,12 @@ fun WatchGridLayout(
     modifier: Modifier = Modifier,
     rowItemsCount: Int,
     itemSize: Dp,
-    state: WatchGridState = rememberGridLayoutState(),
+    state: WatchGridState = rememberWatchGridState(),
     content: @Composable () -> Unit,
 ) {
+
+    check(rowItemsCount > 0) { "rowItemsCount must be positive" }
+    check(itemSize > 0.dp) { "itemSize must be positive" }
 
     val itemSizePx = with(LocalDensity.current) { itemSize.roundToPx() }
     val itemConstraints = Constraints.fixed(width = itemSizePx, height = itemSizePx)
