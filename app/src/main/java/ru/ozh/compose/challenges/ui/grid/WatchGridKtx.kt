@@ -12,9 +12,7 @@ import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-fun Modifier.drag(
-    state: WatchGridState
-) = pointerInput(Unit) {
+fun Modifier.drag(state: WatchGridState) = pointerInput(Unit) {
     val decay = splineBasedDecay<Offset>(this)
     val tracker = VelocityTracker()
     coroutineScope {
@@ -43,9 +41,9 @@ fun Modifier.drag(
                     }
 
                     drag(dragPointerInput.id) { change ->
-                        val changeValue = change.positionChange()
+                        val dragAmount = change.positionChange()
                         launch {
-                            state.snapTo(state.currentOffset.plus(changeValue))
+                            state.snapTo(state.currentOffset.plus(dragAmount))
                         }
                         change.consumePositionChange()
                         tracker.addPointerInputChange(change)
@@ -53,19 +51,17 @@ fun Modifier.drag(
                 }
             }
 
-            val velocity = Offset(
-                tracker.calculateVelocity().x,
-                tracker.calculateVelocity().y
-            )
-            val targetValue = decay.calculateTargetValue(
+            val (velX, velY) = tracker.calculateVelocity()
+            val velocity = Offset(velX, velY)
+            val targetOffset = decay.calculateTargetValue(
                 typeConverter = Offset.VectorConverter,
                 initialValue = state.currentOffset,
                 initialVelocity = velocity
             )
             launch {
                 state.animateTo(
+                    offset = targetOffset,
                     velocity = velocity,
-                    value = targetValue
                 )
             }
         }

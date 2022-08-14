@@ -9,12 +9,15 @@ interface WatchGridState {
 
     val currentOffset: Offset
     val animatable: Animatable<Offset, AnimationVector2D>
+    var config: WatchGridConfig
 
-    suspend fun snapTo(value: Offset)
-    suspend fun animateTo(value: Offset, velocity: Offset)
+    suspend fun snapTo(offset: Offset)
+    suspend fun animateTo(offset: Offset, velocity: Offset)
     suspend fun stop()
 
     fun getPositionFor(index: Int): IntOffset
     fun getScaleFor(position: IntOffset): Float
-    fun setup(config: WatchGridConfig)
+    fun setup(config: WatchGridConfig) {
+        this.config = config
+    }
 }

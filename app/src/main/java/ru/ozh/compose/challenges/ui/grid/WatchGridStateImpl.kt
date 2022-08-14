@@ -18,12 +18,10 @@ data class WatchGridStateImpl(
                 listOf(x, y)
             },
             restore = {
-                WatchGridStateImpl(Offset(it[0], it[1]))
+                WatchGridStateImpl(initialOffset = Offset(it[0], it[1]))
             }
         )
     }
-
-    private var config: WatchGridConfig = WatchGridConfig()
 
     private val decayAnimationSpec = SpringSpec<Offset>(
         dampingRatio = Spring.DampingRatioLowBouncy,
@@ -35,18 +33,20 @@ data class WatchGridStateImpl(
         typeConverter = Offset.VectorConverter
     )
 
+    override var config: WatchGridConfig = WatchGridConfig()
+
     override val currentOffset: Offset
         get() = animatable.value
 
-    override suspend fun snapTo(value: Offset) {
-        val x = value.x.coerceIn(config.overScrollDragRangeHorizontal)
-        val y = value.y.coerceIn(config.overScrollDragRangeVertical)
+    override suspend fun snapTo(offset: Offset) {
+        val x = offset.x.coerceIn(config.overScrollDragRangeHorizontal)
+        val y = offset.y.coerceIn(config.overScrollDragRangeVertical)
         animatable.snapTo(Offset(x, y))
     }
 
-    override suspend fun animateTo(value: Offset, velocity: Offset) {
-        val x = value.x.coerceIn(config.overScrollRangeHorizontal)
-        val y = value.y.coerceIn(config.overScrollRangeVertical)
+    override suspend fun animateTo(offset: Offset, velocity: Offset) {
+        val x = offset.x.coerceIn(config.overScrollRangeHorizontal)
+        val y = offset.y.coerceIn(config.overScrollRangeVertical)
         animatable.animateTo(
             initialVelocity = velocity,
             animationSpec = decayAnimationSpec,
@@ -86,10 +86,6 @@ data class WatchGridStateImpl(
         val z = (-config.c * (x + y) + 1.1f)
             .coerceIn(minimumValue = 0.5f, maximumValue = 1f)
         return z
-    }
-
-    override fun setup(config: WatchGridConfig) {
-        this.config = config
     }
 }
 
