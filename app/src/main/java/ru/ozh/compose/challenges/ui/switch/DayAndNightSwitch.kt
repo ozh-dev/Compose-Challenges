@@ -2,6 +2,8 @@ package ru.ozh.compose.challenges.ui.switch
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FloatSpringSpec
+import androidx.compose.animation.core.Spring.StiffnessMediumLow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.InteractionSource
@@ -15,20 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.launch
-import ru.ozh.compose.challenges.ui.switch.SwitchConsts.AnimationSpec
+import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Black
+import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Orange
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.RippleRadius
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.SwitchHeight
-import ru.ozh.compose.challenges.ui.switch.SwitchConsts.ThumbStartOffset
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.SwitchWidth
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.ThumbDiameter
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.ThumbPathLength
-import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Black
-import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Orange
+import ru.ozh.compose.challenges.ui.switch.SwitchConsts.ThumbStartOffset
 import kotlin.math.roundToInt
 
 
@@ -49,12 +52,29 @@ fun SwitchDaN(
 
     val targetValue = valueToOffset(checked)
     val offset = remember { Animatable(targetValue) }
+    val scaleX = remember { Animatable(1f) }
+    val scaleY = remember { Animatable(1f) }
+
     val scope = rememberCoroutineScope()
 
     DisposableEffect(checked) {
         if (offset.targetValue != targetValue) {
             scope.launch {
-                offset.animateTo(targetValue, AnimationSpec)
+                offset.animateTo(
+                    targetValue = targetValue,
+                    animationSpec = FloatSpringSpec(
+                        dampingRatio = 0.6f,
+                        stiffness = StiffnessMediumLow,
+                    )
+                )
+            }
+
+            scope.launch {
+                scaleY.animateTo(0.75f)
+                scaleY.animateTo(1f)
+
+//                scaleX.animateTo(0.75f)
+//                scaleX.animateTo(1f)
             }
         }
         onDispose { }
@@ -80,6 +100,8 @@ fun SwitchDaN(
             .requiredSize(SwitchWidth, SwitchHeight)
     ) {
         SwitchImpl(
+            scaleX = scaleX.asState(),
+            scaleY = scaleY.asState(),
             checked = checked,
             thumbValue = offset.asState(),
             interactionSource = interactionSource,
@@ -92,6 +114,8 @@ fun SwitchDaN(
 private fun BoxScope.SwitchImpl(
     checked: Boolean,
     thumbValue: State<Float>,
+    scaleX: State<Float>,
+    scaleY: State<Float>,
     interactionSource: InteractionSource,
     thumbShape: Shape,
 ) {
@@ -107,6 +131,15 @@ private fun BoxScope.SwitchImpl(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
+                .graphicsLayer {
+                    this.scaleX = scaleX.value
+                    this.scaleY = scaleY.value
+                    this.transformOrigin = if (checked) {
+                        TransformOrigin(2f, 0.5f)
+                    } else {
+                        TransformOrigin(1f, 0.5f)
+                    }
+                }
                 .offset { IntOffset(thumbValue.value.roundToInt(), 0) }
                 .indication(
                     interactionSource = interactionSource,
