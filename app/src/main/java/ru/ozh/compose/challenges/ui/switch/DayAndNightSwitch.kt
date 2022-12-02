@@ -15,6 +15,7 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.AnimationDuration
@@ -166,6 +168,25 @@ private fun BoxScope.SwitchImpl(
         .background(trackColor, RoundedCornerShape(50))
 
     Box(modifier) {
+
+        SunIcon(
+            modifier = Modifier
+                .offset(x = 2.dp)
+                .requiredSize(24.dp)
+                .align(Alignment.CenterStart)
+                .scale(0.8f),
+            color = Color.White
+        )
+
+        MoonIcon(
+            modifier = Modifier
+                .offset(x = (-2).dp)
+                .requiredSize(24.dp)
+                .align(Alignment.CenterEnd)
+                .scale(0.8f),
+            color = Color.White
+        )
+
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -187,13 +208,7 @@ private fun BoxScope.SwitchImpl(
                 .background(Color.White, thumbShape),
             contentAlignment = Alignment.Center
         ) {
-/*            if (thumbContent != null) {
-                val iconColor = colors.iconColor(enabled, checked)
-                CompositionLocalProvider(
-                    LocalContentColor provides iconColor.value,
-                    content = thumbContent
-                )
-            }*/
+
         }
     }
 }
