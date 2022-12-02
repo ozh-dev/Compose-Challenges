@@ -1,11 +1,13 @@
 package ru.ozh.compose.challenges.ui.switch
 
+import android.animation.TimeInterpolator
 import androidx.compose.animation.core.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 internal object SwitchConsts {
 
+    val AnimationDuration = 250
     val RippleRadius = 20.0.dp
     val SwitchWidth = 60.0.dp
     val SwitchHeight = 32.0.dp
@@ -17,3 +19,6 @@ internal object SwitchConsts {
     val Black = Color(red = 53, green = 53, blue = 53)
     val Orange = Color(red = 243, green = 109, blue = 24)
 }
+
+
+fun TimeInterpolator.toEasing() = Easing { x -> getInterpolation(x) }

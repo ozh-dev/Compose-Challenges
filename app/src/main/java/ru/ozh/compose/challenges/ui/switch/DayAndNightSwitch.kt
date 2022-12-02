@@ -1,9 +1,9 @@
 package ru.ozh.compose.challenges.ui.switch
 
+import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FloatSpringSpec
-import androidx.compose.animation.core.Spring.StiffnessMediumLow
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.InteractionSource
@@ -23,7 +23,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import ru.ozh.compose.challenges.ui.switch.SwitchConsts.AnimationDuration
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Black
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.Orange
 import ru.ozh.compose.challenges.ui.switch.SwitchConsts.RippleRadius
@@ -60,21 +62,57 @@ fun SwitchDaN(
     DisposableEffect(checked) {
         if (offset.targetValue != targetValue) {
             scope.launch {
-                offset.animateTo(
-                    targetValue = targetValue,
-                    animationSpec = FloatSpringSpec(
-                        dampingRatio = 0.6f,
-                        stiffness = StiffnessMediumLow,
+                launch {
+                    offset.animateTo(
+                        targetValue = targetValue,
+                        animationSpec = tween(
+                            durationMillis = AnimationDuration,
+                            easing = OvershootInterpolator(1.5f).toEasing()
+                        )
                     )
-                )
-            }
+                }
 
-            scope.launch {
-                scaleY.animateTo(0.75f)
-                scaleY.animateTo(1f)
+                launch {
+                    scaleY.animateTo(
+                        targetValue = 0.8f,
+                        animationSpec = tween(
+                            durationMillis = AnimationDuration / 2,
+                        )
+                    )
 
-//                scaleX.animateTo(0.75f)
-//                scaleX.animateTo(1f)
+                    coroutineScope {
+                        launch {
+                            scaleX.animateTo(
+                                targetValue = 0.9f,
+                                animationSpec = tween(
+                                    durationMillis = AnimationDuration / 4,
+                                )
+                            )
+
+                            scaleX.animateTo(
+                                targetValue = 1f,
+                                animationSpec = tween(
+                                    durationMillis = AnimationDuration / 2,
+                                )
+                            )
+                        }
+                        launch {
+                            scaleY.animateTo(
+                                targetValue = 1.1f,
+                                animationSpec = tween(
+                                    durationMillis = AnimationDuration / 4,
+                                )
+                            )
+
+                            scaleY.animateTo(
+                                targetValue = 1f,
+                                animationSpec = tween(
+                                    durationMillis = AnimationDuration / 2,
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
         onDispose { }
@@ -135,9 +173,9 @@ private fun BoxScope.SwitchImpl(
                     this.scaleX = scaleX.value
                     this.scaleY = scaleY.value
                     this.transformOrigin = if (checked) {
-                        TransformOrigin(2f, 0.5f)
+                        TransformOrigin(3f, 0.5f)
                     } else {
-                        TransformOrigin(1f, 0.5f)
+                        TransformOrigin(0f, 0.5f)
                     }
                 }
                 .offset { IntOffset(thumbValue.value.roundToInt(), 0) }
