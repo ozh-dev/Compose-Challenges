@@ -1,6 +1,6 @@
 package ru.ozh.compose.challenges.ui.switch
 
-import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -16,5 +16,4 @@ internal object SwitchConsts {
 
     val Black = Color(red = 53, green = 53, blue = 53)
     val Orange = Color(red = 243, green = 109, blue = 24)
-    val AnimationSpec = TweenSpec<Float>(durationMillis = 100)
 }
