@@ -169,23 +169,25 @@ private fun BoxScope.SwitchImpl(
 
     Box(modifier) {
 
-        SunIcon(
-            modifier = Modifier
-                .offset(x = 2.dp)
-                .requiredSize(24.dp)
-                .align(Alignment.CenterStart)
-                .scale(0.9f),
-            color = Color.White
-        )
-
-        MoonIcon(
-            modifier = Modifier
-                .offset(x = (-2).dp)
-                .requiredSize(24.dp)
-                .align(Alignment.CenterEnd)
-                .scale(0.9f),
-            color = Color.White
-        )
+        if (checked) {
+            SunIcon(
+                modifier = Modifier
+                    .offset(x = 2.dp)
+                    .requiredSize(24.dp)
+                    .align(Alignment.CenterStart)
+                    .scale(0.9f),
+                color = Color.White
+            )
+        } else {
+            MoonIcon(
+                modifier = Modifier
+                    .offset(x = (-2).dp)
+                    .requiredSize(24.dp)
+                    .align(Alignment.CenterEnd)
+                    .scale(0.9f),
+                color = Color.White
+            )
+        }
 
         Box(
             modifier = Modifier
