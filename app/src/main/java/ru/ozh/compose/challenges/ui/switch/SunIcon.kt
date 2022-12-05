@@ -1,11 +1,15 @@
 package ru.ozh.compose.challenges.ui.switch
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -16,6 +20,8 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SunIcon(
@@ -31,33 +37,77 @@ fun SunIcon(
             error("width and height must be equals, but width = $width & height = $height")
         }
 
+        val LightCount = 8
+        val LightRotateAngle = 45f
         val sizePx = with(LocalDensity.current) { width.toPx() }
         val circleRadius = with(LocalDensity.current) { 4.dp.toPx() }
         val strokeWidth = with(LocalDensity.current) { 2.dp.toPx() }
 
-        val lightStartX = sizePx / 2
-        val lightStartY = with(LocalDensity.current) { 5.dp.toPx() }
-        val lightLongEndY = with(LocalDensity.current) { 0.dp.toPx() }
-        val lightShortEndY = with(LocalDensity.current) { 2.dp.toPx() }
+        val circleAnimation = remember { Animatable(0f) }
+        val lightsAlphaAnimation = remember { Array(LightCount) { Animatable(0f) } }
+        val lightsOffsetAnimation = remember { Array(LightCount) { Animatable(0.75f) } }
+
+        LaunchedEffect(Unit) {
+            circleAnimation.animateTo(
+                1f,
+                animationSpec = TweenSpec(
+                    durationMillis = 75
+                )
+            )
+
+            lightsAlphaAnimation.zip(lightsOffsetAnimation) { alpha, offset -> alpha to offset }
+                .withIndex()
+                .forEach { (index, value) ->
+                    val (alpha, offset) = value
+                    delay(index * 10L)
+                    launch {
+                        alpha.animateTo(
+                            1f,
+                            animationSpec = TweenSpec(
+                                durationMillis = 15
+                            )
+                        )
+                    }
+                    launch {
+                        offset.animateTo(
+                            1f,
+                            animationSpec = TweenSpec(
+                                durationMillis = 15
+                            )
+                        )
+                    }
+                }
+        }
 
         Canvas(modifier = modifier) {
 
             drawCircle(
                 color = color,
-                radius = circleRadius,
+                radius = circleRadius * circleAnimation.value,
                 style = Stroke(width = strokeWidth)
             )
 
-            repeat(8) { index ->
-                rotate(degrees = index * 45f) {
-                    val lightEndY = if (index % 2 == 0) lightLongEndY else lightShortEndY
-                    val start = Offset(x = lightStartX, y = lightStartY)
-                    val end = Offset(x = lightStartX, y = lightEndY)
+            repeat(LightCount) { index ->
+                rotate(degrees = -90 + (index * LightRotateAngle)) {
+                    val lightStartX = sizePx * 0.8f
+                    val lightEndX = sizePx * if (index % 2 == 0) 1f else 0.95f
+
+                    val lightY = sizePx / 2
+
+                    val lightStart = Offset(
+                        x = lightStartX * lightsOffsetAnimation[index].value,
+                        y = lightY
+                    )
+                    val lightEnd = Offset(
+                        x = lightEndX * lightsOffsetAnimation[index].value,
+                        y = lightY
+                    )
+
                     drawLine(
-                        color = color,
-                        start = start,
-                        end = end,
-                        strokeWidth = strokeWidth,
+                        color = color.copy(alpha = lightsAlphaAnimation[index].value),
+                        start = lightStart,
+                        end = lightEnd,
+                        strokeWidth = strokeWidth * lightsOffsetAnimation[index].value,
                         cap = StrokeCap.Round
                     )
                 }
@@ -66,7 +116,7 @@ fun SunIcon(
     }
 }
 
-@Preview(widthDp = 32, heightDp = 32, showBackground = true)
+@Preview(widthDp = 32, heightDp = 32, showBackground = false)
 @Composable
 fun SunIconPreview() {
     Box(
@@ -78,7 +128,7 @@ fun SunIconPreview() {
             modifier = Modifier
                 .requiredSize(24.dp)
                 .align(Alignment.CenterStart),
-            color = Color.White
+            color = Color.White,
         )
     }
 }
