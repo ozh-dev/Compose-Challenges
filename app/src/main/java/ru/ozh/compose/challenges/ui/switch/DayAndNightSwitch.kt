@@ -175,7 +175,7 @@ private fun BoxScope.SwitchImpl(
                     .offset(x = 2.dp)
                     .requiredSize(24.dp)
                     .align(Alignment.CenterStart)
-                    .scale(0.9f),
+                    .scale(0.8f),
                 color = Color.White
             )
         } else {
@@ -184,7 +184,7 @@ private fun BoxScope.SwitchImpl(
                     .offset(x = (-2).dp)
                     .requiredSize(24.dp)
                     .align(Alignment.CenterEnd)
-                    .scale(0.9f),
+                    .scale(0.8f),
                 color = Color.White
             )
         }

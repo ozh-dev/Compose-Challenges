@@ -59,12 +59,12 @@ fun SunIcon(
                 .withIndex()
                 .forEach { (index, value) ->
                     val (alpha, offset) = value
-                    delay(index * 10L)
+                    delay(index * 5L)
                     launch {
                         alpha.animateTo(
                             1f,
                             animationSpec = TweenSpec(
-                                durationMillis = 15
+                                durationMillis = 10
                             )
                         )
                     }
@@ -72,7 +72,7 @@ fun SunIcon(
                         offset.animateTo(
                             1f,
                             animationSpec = TweenSpec(
-                                durationMillis = 15
+                                durationMillis = 10
                             )
                         )
                     }
