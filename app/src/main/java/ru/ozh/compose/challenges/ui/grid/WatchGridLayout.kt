@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.ozh.compose.challenges.ui.grid.Icons.appleIcons
+import ru.ozh.compose.challenges.ui.ktx.drag
 import ru.ozh.compose.challenges.ui.theme.ComposeChallengesTheme
 
 @Composable
@@ -38,19 +39,17 @@ fun WatchGridLayout(
     ) { measurables, layoutConstraints ->
 
         val placeables = measurables.map { measurable -> measurable.measure(itemConstraints) }
-        val cells = placeables.mapIndexed { index, _ ->
+        val cells = List(placeables.size) { index ->
             val x = index % rowItemsCount
             val y = (index - x) / rowItemsCount
             Cell(x, y)
         }
 
-        state.setup(
-            WatchGridConfig(
-                layoutWidthPx = layoutConstraints.maxWidth,
-                layoutHeightPx = layoutConstraints.maxHeight,
-                itemSizePx = itemSizePx,
-                cells = cells
-            )
+        state.config = WatchGridConfig(
+            layoutWidthPx = layoutConstraints.maxWidth,
+            layoutHeightPx = layoutConstraints.maxHeight,
+            itemSizePx = itemSizePx,
+            cells = cells
         )
 
         layout(layoutConstraints.maxWidth, layoutConstraints.maxHeight) {
@@ -81,7 +80,7 @@ fun WatchGridLayoutPreview() {
             itemSize = 80.dp
         ) {
             appleIcons.forEach { (res, name) ->
-                Icon(
+                IconRounded(
                     res = res
                 )
             }

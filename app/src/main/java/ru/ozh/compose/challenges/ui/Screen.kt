@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import ru.ozh.compose.challenges.ui.grid.Icon
+import ru.ozh.compose.challenges.ui.grid.IconRounded
 import ru.ozh.compose.challenges.ui.grid.Icons
 import ru.ozh.compose.challenges.ui.grid.WatchGridLayout
 import ru.ozh.compose.challenges.ui.theme.ComposeChallengesTheme
@@ -52,7 +52,7 @@ fun GridScreen() {
                 itemSize = 80.dp
             ) {
                 Icons.appleIcons.forEach { (res, name) ->
-                    Icon(res = res,
+                    IconRounded(res = res,
                         modifier = Modifier.clickable {
                             toast?.cancel()
                             toast = Toast.makeText(
