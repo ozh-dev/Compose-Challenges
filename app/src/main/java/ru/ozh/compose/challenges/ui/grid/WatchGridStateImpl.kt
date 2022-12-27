@@ -21,6 +21,9 @@ data class WatchGridStateImpl(
                 WatchGridStateImpl(initialOffset = Offset(it[0], it[1]))
             }
         )
+
+        private const val CELL_MIN_SCALE = 0.5f
+        private const val CELL_MAX_SCALE = 1.0f
     }
 
     private val decayAnimationSpec = SpringSpec<Offset>(
@@ -34,9 +37,6 @@ data class WatchGridStateImpl(
     )
 
     override var config: WatchGridConfig = WatchGridConfig()
-
-    override val currentOffset: Offset
-        get() = animatable.value
 
     override suspend fun snapTo(offset: Offset) {
         val x = offset.x.coerceIn(config.overScrollDragRangeHorizontal)
@@ -84,7 +84,10 @@ data class WatchGridStateImpl(
         val x = (offsetX * offsetX) / (config.a * config.a)
         val y = (offsetY * offsetY) / (config.b * config.b)
         val z = (-config.c * (x + y) + 1.1f)
-            .coerceIn(minimumValue = 0.5f, maximumValue = 1f)
+            .coerceIn(
+                minimumValue = CELL_MIN_SCALE,
+                maximumValue = CELL_MAX_SCALE
+            )
         return z
     }
 }

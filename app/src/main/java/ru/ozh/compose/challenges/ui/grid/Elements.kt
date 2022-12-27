@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 
 @Composable
-fun Icon(
+fun IconRounded(
     modifier: Modifier = Modifier,
     @DrawableRes res: Int
 ) {
@@ -32,7 +32,9 @@ fun Icon(
 }
 
 @Composable
-fun CrossLine() {
+fun CrossLine(
+    color: Color = Color.White
+) {
     Canvas(
         modifier = Modifier
             .fillMaxSize(),
@@ -40,14 +42,14 @@ fun CrossLine() {
             drawLine(
                 start = Offset(this.size.width / 2, 0f),
                 end = Offset(this.size.width / 2, this.size.height),
-                color = Color.White,
+                color = color,
                 strokeWidth = 4f
             )
 
             drawLine(
                 start = Offset(0f, this.size.height / 2),
                 end = Offset(this.size.width, this.size.height / 2),
-                color = Color.White,
+                color = color,
                 strokeWidth = 4f
             )
         }
