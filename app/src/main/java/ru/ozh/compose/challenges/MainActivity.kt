@@ -1,14 +1,18 @@
 package ru.ozh.compose.challenges
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
+import ru.ozh.compose.challenges.ui.GridScreen
+import ru.ozh.compose.challenges.ui.clock.WaveClock
+import ru.ozh.compose.challenges.ui.clock.currentTime
 import ru.ozh.compose.challenges.ui.switch.SwitchDaN
 import ru.ozh.compose.challenges.ui.theme.ComposeChallengesTheme
 
@@ -18,7 +22,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeChallengesTheme {
 //            GridScreen()
-                SwitchScreen()
+//                SwitchScreen()
+                WaveClockScreen()
+
             }
         }
     }
@@ -40,7 +46,25 @@ fun SwitchScreen() {
                 checked = it
             }
         )
-        
-//        Switch(checked = , onCheckedChange = )
     }
+}
+
+@Composable
+fun WaveClockScreen() {
+    var time by remember { mutableStateOf(currentTime()) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            time = currentTime()
+            delay(1000)
+            Log.d("WaveClockScreen", "$time ${time.hashCode()}")
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        WaveClock(time)
+    }
+
 }
