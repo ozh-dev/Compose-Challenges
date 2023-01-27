@@ -12,13 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun WaveClock(
@@ -42,8 +43,8 @@ fun WaveClock(
             elevation = plateElevation,
             roundCorner = plateRoundCorner,
             textColor = digitColor,
-            textSize = digitSize
-
+            textSize = digitSize,
+            animationDelay = 100
         )
         DotsColumn(digitColor)
         DigitPlate(
@@ -53,7 +54,8 @@ fun WaveClock(
             elevation = plateElevation,
             roundCorner = plateRoundCorner,
             textColor = digitColor,
-            textSize = digitSize
+            textSize = digitSize,
+            animationDelay = 50
         )
         DotsColumn(digitColor)
         DigitPlate(
@@ -74,9 +76,10 @@ fun DigitPlate(
     plateSize: Dp,
     roundCorner: Dp,
     backgroundColor: Color,
-    elevation: Dp = 0.dp,
     textColor: Color,
-    textSize: TextUnit
+    textSize: TextUnit,
+    elevation: Dp = 0.dp,
+    animationDelay: Long = 0,
 ) {
     val backGroundShape = RoundedCornerShape(size = roundCorner)
     WiggleBox(
@@ -88,12 +91,13 @@ fun DigitPlate(
         key = value,
         shakeOffset = plateSize / 10,
         shakeDuration = 300,
-        shakeDelay = 0
+        shakeDelay = animationDelay
     ) {
         DropDigitText(
             value = value,
             textColor = textColor,
-            textSize = textSize
+            textSize = textSize,
+            animationDelay = animationDelay
         )
     }
 }
@@ -102,9 +106,10 @@ fun DigitPlate(
 fun DropDigitText(
     value: Int,
     textColor: Color,
-    textSize: TextUnit
+    textSize: TextUnit,
+    animationDelay: Long
 ) {
-    SlideContentAnimation(targetState = value) { targetCount ->
+    SlideContentAnimation(targetState = value, delay = animationDelay) { targetCount ->
         Text(
             text = "%02d".format(targetCount),
             fontSize = textSize,
@@ -119,9 +124,10 @@ fun WiggleBox(
     key: Any,
     shakeOffset: Dp = 0.dp,
     shakeDuration: Int = 0,
-    shakeDelay: Int = 0,
+    shakeDelay: Long = 0,
     content: @Composable BoxScope.() -> Unit
 ) {
+    var ignoreFirstComposition by remember { mutableStateOf(true) }
     var targetOffset by remember { mutableStateOf(0.dp) }
 
     val animateOffset by animateDpAsState(
@@ -130,7 +136,7 @@ fun WiggleBox(
             iterations = 1,
             animation = tween(
                 durationMillis = shakeDuration / 2,
-                delayMillis = shakeDelay,
+                delayMillis = shakeDelay.toInt(),
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Reverse
@@ -141,7 +147,10 @@ fun WiggleBox(
     )
 
     LaunchedEffect(key) {
-        targetOffset = shakeOffset
+        if (!ignoreFirstComposition) {
+            targetOffset = shakeOffset
+        }
+        ignoreFirstComposition = false
     }
 
     Box(
@@ -156,11 +165,15 @@ fun WiggleBox(
 @Composable
 fun SlideContentAnimation(
     targetState: Int,
-    content: @Composable AnimatedVisibilityScope.(targetState: Int) -> Unit
+    delay: Long = 0,
+    content: @Composable AnimatedVisibilityScope.(targetState: Int) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+
     AnimatedContent(
         targetState = targetState,
         transitionSpec = {
+            scope.launch { delay(delay) }
             // Compare the incoming number with the previous number.
             if (targetState > initialState) {
                 // If the target number is larger, it slides up and fades in
