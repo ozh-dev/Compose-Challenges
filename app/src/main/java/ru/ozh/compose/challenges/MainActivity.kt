@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import kotlinx.coroutines.delay
 import ru.ozh.compose.challenges.ui.GridScreen
 import ru.ozh.compose.challenges.ui.clock.WaveClock
@@ -61,7 +62,7 @@ fun WaveClockScreen() {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().scale(2.5f),
         contentAlignment = Alignment.Center
     ) {
         WaveClock(time)
