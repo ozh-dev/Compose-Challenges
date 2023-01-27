@@ -28,7 +28,7 @@ fun WaveClock(
     plateElevation: Dp = 8.dp,
     plateRoundCorner: Dp = 3.dp,
     digitSize: TextUnit = 20.sp,
-    digitColor: Color = Color.Black
+    digitColor: Color = Color.Black.copy(alpha = 0.6f)
 ) {
     Row(
         modifier = Modifier.wrapContentSize(),
@@ -45,7 +45,7 @@ fun WaveClock(
             textSize = digitSize
 
         )
-        DotsColumn()
+        DotsColumn(digitColor)
         DigitPlate(
             value = time.minutes,
             plateSize = plateSize,
@@ -55,7 +55,7 @@ fun WaveClock(
             textColor = digitColor,
             textSize = digitSize
         )
-        DotsColumn()
+        DotsColumn(digitColor)
         DigitPlate(
             value = time.seconds,
             plateSize = plateSize,
@@ -144,7 +144,6 @@ fun WiggleBox(
         targetOffset = shakeOffset
     }
 
-    //todo canvas + brush + color shadow
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -153,30 +152,6 @@ fun WiggleBox(
         content = content
     )
 }
-
-/*fun Modifier.shake(enabled: Boolean) = composed(
-
-    factory = {
-
-        val scale by animateFloatAsState(
-            targetValue = if (enabled) .9f else 1f,
-            animationSpec = repeatable(
-                iterations = 5,
-                animation = tween(durationMillis = 50, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-
-        Modifier.graphicsLayer {
-            scaleX = if (enabled) scale else 1f
-            scaleY = if (enabled) scale else 1f
-        }
-    },
-    inspectorInfo = debugInspectorInfo {
-        name = "shake"
-        properties["enabled"] = enabled
-    }
-)*/
 
 @Composable
 fun SlideContentAnimation(
@@ -190,12 +165,12 @@ fun SlideContentAnimation(
             if (targetState > initialState) {
                 // If the target number is larger, it slides up and fades in
                 // while the initial (smaller) number slides up and fades out.
-                slideInVertically { height -> -height } + fadeIn() with
+                slideInVertically { height -> -height } with
                         slideOutVertically { height -> height }
             } else {
                 // If the target number is smaller, it slides down and fades in
                 // while the initial number slides down and fades out.
-                slideInVertically { height -> -height } + fadeIn() with
+                slideInVertically { height -> -height } with
                         slideOutVertically { height -> height }
             }.using(
                 // Disable clipping since the faded slide-in/out should

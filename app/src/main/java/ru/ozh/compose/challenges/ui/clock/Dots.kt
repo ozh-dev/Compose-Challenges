@@ -11,16 +11,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Dot() {
+fun Dot(
+    color: Color
+) {
     Canvas(modifier = Modifier.size(2.dp)) {
         drawCircle(
-            color = Color.Black,
+            color = color,
         )
     }
 }
 
 @Composable
-fun DotsColumn() {
+fun DotsColumn(
+    dotColor: Color
+) {
 
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -40,8 +44,8 @@ fun DotsColumn() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Dot()
+        Dot(dotColor)
         Spacer(modifier = Modifier.height(4.dp))
-        Dot()
+        Dot(dotColor)
     }
 }
