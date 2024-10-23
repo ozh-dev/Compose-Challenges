@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import ru.ozh.compose.challenges.ui.GridScreen
 import ru.ozh.compose.challenges.ui.clock.WaveClock
 import ru.ozh.compose.challenges.ui.clock.currentTime
+import ru.ozh.compose.challenges.ui.magnet.MagnetButtonScreen
 import ru.ozh.compose.challenges.ui.switch.SwitchDaN
 import ru.ozh.compose.challenges.ui.theme.ComposeChallengesTheme
 
@@ -24,8 +25,8 @@ class MainActivity : ComponentActivity() {
             ComposeChallengesTheme {
 //            GridScreen()
 //                SwitchScreen()
-                WaveClockScreen()
-
+//                WaveClockScreen()
+                MagnetButtonScreen()
             }
         }
     }

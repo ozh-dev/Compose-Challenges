@@ -202,10 +202,10 @@ private fun BoxScope.SwitchImpl(
                     }
                 }
                 .offset { IntOffset(thumbValue.value.roundToInt(), 0) }
-                .indication(
-                    interactionSource = interactionSource,
-                    indication = rememberRipple(bounded = false, RippleRadius)
-                )
+//                .indication(
+//                    interactionSource = interactionSource,
+                    //indication = rememberRipple(bounded = false, RippleRadius)
+//                )
                 .requiredSize(ThumbDiameter)
                 .background(Color.White, thumbShape),
             contentAlignment = Alignment.Center
